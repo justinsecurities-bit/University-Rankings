@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insect Smash</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section id="start-screen" class="screen">
+      <h1>Insect Smash</h1>
+      <p>Smash insects before they escape. Survive as long as you can.</p>
+      <button id="start-btn" class="btn">Start Game</button>
+      <p class="hint">Desktop: Click | Mobile: Tap</p>
+    </section>
+
+    <section id="game-screen" class="screen hidden">
+      <header class="hud">
+        <div class="hud-item">Score: <span id="score">0</span></div>
+        <div class="hud-item">Combo: <span id="combo">x1.0</span></div>
+        <div class="hud-item">High Score: <span id="high-score">0</span></div>
+        <div class="hud-item">Time: <span id="time-left">60</span>s</div>
+        <div class="hud-item" id="lives"></div>
+      </header>
+      <div class="canvas-wrap">
+        <canvas id="game-canvas" width="960" height="540" aria-label="Insect Smash game canvas"></canvas>
+      </div>
+    </section>
+
+    <section id="game-over-screen" class="screen hidden">
+      <h2>Game Over</h2>
+      <p>Final Score: <span id="final-score">0</span></p>
+      <p>Best Score: <span id="best-score">0</span></p>
+      <button id="play-again-btn" class="btn">Play Again</button>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
