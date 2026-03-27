@@ -205,3 +205,103 @@ a:hover {
     min-width: calc(50% - 6px);
   }
 }
+
+/* Admin Panel Styles */
+#admin-toggle {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+#admin-panel {
+  margin-top: 16px;
+  padding: 14px;
+  background: #0a0f1d;
+  border-radius: 8px;
+}
+
+#admin-panel.hidden {
+  display: none;
+}
+
+.admin-section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a3b5a;
+}
+
+.admin-section:last-child {
+  border-bottom: none;
+}
+
+.admin-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
+.admin-section form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.message {
+  grid-column: 1 / -1;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.message.success {
+  background: #1a3a2a;
+  color: #4ade80;
+  border: 1px solid #4ade80;
+}
+
+.message.error {
+  background: #3a1a1a;
+  color: #f87171;
+  border: 1px solid #f87171;
+}
+
+.message.info {
+  background: #1a2a3a;
+  color: #60a5fa;
+  border: 1px solid #60a5fa;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+
+.btn-primary:hover {
+  background: #3d6fcc;
+  border-color: #3d6fcc;
+}
+
+.btn-danger {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 16px;
+  margin-top: 10px;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+#metric-fields {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+

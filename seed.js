@@ -200,7 +200,8 @@ async function createTables() {
         ranking_provider VARCHAR(20) NOT NULL,
         rank INTEGER NOT NULL,
         overall_score NUMERIC(5,1) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(university_id, ranking_provider)
       )
     `);
     
@@ -208,7 +209,7 @@ async function createTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS the_metrics (
         id SERIAL PRIMARY KEY,
-        university_id INTEGER NOT NULL REFERENCES universities(id) ON DELETE CASCADE,
+        university_id INTEGER NOT NULL REFERENCES universities(id) ON DELETE CASCADE UNIQUE,
         teaching NUMERIC(5,1),
         research NUMERIC(5,1),
         citations NUMERIC(5,1),
@@ -221,7 +222,7 @@ async function createTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS qs_metrics (
         id SERIAL PRIMARY KEY,
-        university_id INTEGER NOT NULL REFERENCES universities(id) ON DELETE CASCADE,
+        university_id INTEGER NOT NULL REFERENCES universities(id) ON DELETE CASCADE UNIQUE,
         academic_reputation NUMERIC(5,1),
         employer_reputation NUMERIC(5,1),
         faculty_student_ratio NUMERIC(5,1),
@@ -236,7 +237,7 @@ async function createTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS arwu_metrics (
         id SERIAL PRIMARY KEY,
-        university_id INTEGER NOT NULL REFERENCES universities(id) ON DELETE CASCADE,
+        university_id INTEGER NOT NULL REFERENCES universities(id) ON DELETE CASCADE UNIQUE,
         alumni NUMERIC(5,1),
         award NUMERIC(5,1),
         hici NUMERIC(5,1),

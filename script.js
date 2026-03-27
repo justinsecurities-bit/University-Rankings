@@ -508,7 +508,274 @@ function bindEvents() {
   window.addEventListener("popstate", handleRoute);
 }
 
+// Admin Panel Functions
+function setupAdminPanel() {
+  const adminToggle = document.getElementById("admin-toggle");
+  const adminPanel = document.getElementById("admin-panel");
+
+  adminToggle.addEventListener("click", () => {
+    adminPanel.classList.toggle("hidden");
+  });
+
+  // Load universities for edit/ranking selects
+  loadUniversitiesForAdmin();
+
+  // Add new university
+  document.getElementById("add-university-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("new-uni-name").value;
+    const country = document.getElementById("new-uni-country").value;
+    const region = document.getElementById("new-uni-region").value;
+    const messageEl = document.getElementById("add-uni-message");
+
+    try {
+      const response = await fetch("/api/admin/universities/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, country, region }),
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      
+      messageEl.className = "message success";
+      messageEl.textContent = "✓ University added successfully!";
+      document.getElementById("add-university-form").reset();
+      loadUniversitiesForAdmin();
+      render();
+      
+      setTimeout(() => messageEl.textContent = "", 3000);
+    } catch (error) {
+      messageEl.className = "message error";
+      messageEl.textContent = "✗ Error: " + error.message;
+    }
+  });
+
+  // Edit university
+  document.getElementById("edit-uni-id").addEventListener("change", async (e) => {
+    const id = e.target.value;
+    if (!id) return;
+    
+    const uni = rankingData.find(u => u.id === Number(id));
+    if (uni) {
+      document.getElementById("edit-uni-name").value = uni.name;
+      document.getElementById("edit-uni-country").value = uni.country;
+      document.getElementById("edit-uni-region").value = uni.region;
+    }
+  });
+
+  document.getElementById("edit-university-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = document.getElementById("edit-uni-id").value;
+    const name = document.getElementById("edit-uni-name").value;
+    const country = document.getElementById("edit-uni-country").value;
+    const region = document.getElementById("edit-uni-region").value;
+    const messageEl = document.getElementById("edit-uni-message");
+
+    try {
+      const response = await fetch("/api/admin/universities/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: Number(id), name, country, region }),
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      
+      messageEl.className = "message success";
+      messageEl.textContent = "✓ University updated successfully!";
+      loadUniversitiesForAdmin();
+      render();
+      
+      setTimeout(() => messageEl.textContent = "", 3000);
+    } catch (error) {
+      messageEl.className = "message error";
+      messageEl.textContent = "✗ Error: " + error.message;
+    }
+  });
+
+  document.getElementById("delete-university-btn").addEventListener("click", async () => {
+    const id = document.getElementById("edit-uni-id").value;
+    if (!id) return alert("Select a university first");
+    
+    if (!confirm("Are you sure you want to delete this university?")) return;
+    
+    const messageEl = document.getElementById("edit-uni-message");
+    try {
+      const response = await fetch("/api/admin/universities/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: Number(id) }),
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      
+      messageEl.className = "message success";
+      messageEl.textContent = "✓ University deleted successfully!";
+      document.getElementById("edit-university-form").reset();
+      loadUniversitiesForAdmin();
+      render();
+      
+      setTimeout(() => messageEl.textContent = "", 3000);
+    } catch (error) {
+      messageEl.className = "message error";
+      messageEl.textContent = "✗ Error: " + error.message;
+    }
+  });
+
+  // Update ranking
+  document.getElementById("update-ranking-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const universityId = Number(document.getElementById("rank-uni-id").value);
+    const provider = document.getElementById("rank-provider").value;
+    const rank = Number(document.getElementById("rank-value").value);
+    const overallScore = Number(document.getElementById("rank-score").value);
+    const messageEl = document.getElementById("update-rank-message");
+
+    try {
+      const response = await fetch("/api/admin/rankings/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ universityId, provider, rank, overallScore }),
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      
+      messageEl.className = "message success";
+      messageEl.textContent = "✓ Ranking updated successfully!";
+      document.getElementById("update-ranking-form").reset();
+      render();
+      
+      setTimeout(() => messageEl.textContent = "", 3000);
+    } catch (error) {
+      messageEl.className = "message error";
+      messageEl.textContent = "✗ Error: " + error.message;
+    }
+  });
+
+  // Update metrics
+  document.getElementById("update-metrics-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const universityId = Number(document.getElementById("metric-uni-id").value);
+    const provider = document.getElementById("metric-provider").value;
+    const messageEl = document.getElementById("update-metric-message");
+    
+    const formData = new FormData(document.getElementById("update-metrics-form"));
+
+    try {
+      let body = { universityId };
+      const inputs = document.querySelectorAll("#metric-fields input");
+      inputs.forEach(input => {
+        body[input.name] = input.value ? Number(input.value) : null;
+      });
+
+      let endpoint = null;
+      if (provider === "THE") endpoint = "/api/admin/metrics/the";
+      else if (provider === "QS") endpoint = "/api/admin/metrics/qs";
+      else if (provider === "ARWU") endpoint = "/api/admin/metrics/arwu";
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      
+      if (!response.ok) throw new Error(await response.text());
+      
+      messageEl.className = "message success";
+      messageEl.textContent = "✓ Metrics updated successfully!";
+      
+      setTimeout(() => messageEl.textContent = "", 3000);
+    } catch (error) {
+      messageEl.className = "message error";
+      messageEl.textContent = "✗ Error: " + error.message;
+    }
+  });
+
+  // Update metric fields based on provider
+  window.updateMetricFields = function() {
+    const provider = document.getElementById("metric-provider").value;
+    const container = document.getElementById("metric-fields");
+    container.innerHTML = "";
+
+    const fields = {
+      THE: [
+        { name: "teaching", label: "Teaching" },
+        { name: "research", label: "Research" },
+        { name: "citations", label: "Citations" },
+        { name: "internationalOutlook", label: "International Outlook" },
+      ],
+      QS: [
+        { name: "academicReputation", label: "Academic Reputation" },
+        { name: "employerReputation", label: "Employer Reputation" },
+        { name: "facultyStudent", label: "Faculty/Student Ratio" },
+        { name: "citationsPerFaculty", label: "Citations Per Faculty" },
+        { name: "internationalFaculty", label: "International Faculty" },
+        { name: "internationalStudents", label: "International Students" },
+      ],
+      ARWU: [
+        { name: "alumni", label: "Alumni" },
+        { name: "award", label: "Award" },
+        { name: "hici", label: "HiCi" },
+        { name: "ns", label: "Nature/Science" },
+        { name: "pub", label: "Publications" },
+        { name: "pcp", label: "Per Capita Performance" },
+      ],
+    };
+
+    fields[provider]?.forEach(field => {
+      const div = document.createElement("div");
+      div.className = "field";
+      div.innerHTML = `
+        <label for="${field.name}">${field.label}</label>
+        <input type="number" name="${field.name}" id="${field.name}" step="0.1" min="0" max="100" placeholder="0" />
+      `;
+      container.appendChild(div);
+    });
+  };
+
+  // Initialize metric fields
+  updateMetricFields();
+}
+
+async function loadUniversitiesForAdmin() {
+  try {
+    const unis = await fetch("/api/universities").then(r => r.json());
+    
+    // Update edit select
+    const editSelect = document.getElementById("edit-uni-id");
+    editSelect.innerHTML = '<option value="">Select University to Edit</option>';
+    unis.forEach(uni => {
+      const opt = document.createElement("option");
+      opt.value = uni.id;
+      opt.textContent = uni.name;
+      editSelect.appendChild(opt);
+    });
+
+    // Update ranking select
+    const rankSelect = document.getElementById("rank-uni-id");
+    rankSelect.innerHTML = '<option value="">Select University</option>';
+    unis.forEach(uni => {
+      const opt = document.createElement("option");
+      opt.value = uni.id;
+      opt.textContent = uni.name;
+      rankSelect.appendChild(opt);
+    });
+
+    // Update metric select
+    const metricSelect = document.getElementById("metric-uni-id");
+    metricSelect.innerHTML = '<option value="">Select University</option>';
+    unis.forEach(uni => {
+      const opt = document.createElement("option");
+      opt.value = uni.id;
+      opt.textContent = uni.name;
+      metricSelect.appendChild(opt);
+    });
+  } catch (error) {
+    console.error("Failed to load universities for admin:", error);
+  }
+}
+
 initFilters();
 bindEvents();
+setupAdminPanel();
 render();
 handleRoute();
