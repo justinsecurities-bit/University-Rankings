@@ -1,8 +1,17 @@
 {
+  "buildCommand": "npm install",
+  "framework": "static",
   "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
     {
       "source": "/university/:id",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "DATABASE_URL": "@DATABASE_URL"
+  }
 }
