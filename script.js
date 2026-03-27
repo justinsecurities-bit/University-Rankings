@@ -124,56 +124,62 @@ const thePermutation = shuffledRanks(11);
 const qsPermutation = shuffledRanks(23);
 const arwuPermutation = shuffledRanks(37);
 
-const rankingData = universitySeeds.map(([name, country, region], i) => {
-  const theRank = thePermutation[i];
-  const qsRank = qsPermutation[i];
-  const arwuRank = arwuPermutation[i];
-  const theOverall = scoreFromRank(theRank, seeded(i + 1) * 0.25);
-  const qsOverall = scoreFromRank(qsRank, seeded(i + 31) * 0.28);
-  const arwuOverall = scoreFromRank(arwuRank, seeded(i + 61) * 0.2);
-  const avgRank = Number(((theRank + qsRank + arwuRank) / 3).toFixed(1));
+// Initialize rankingData from database API
+let rankingData = [];
 
-  return {
-    id: i + 1,
-    name,
-    country,
-    region,
-    theRank,
-    qsRank,
-    arwuRank,
-    avgRank,
-    rankings: {
-      the: {
-        rank: theRank,
-        overall: theOverall,
-        teaching: Number((theOverall - 3 + seeded(i + 3) * 6).toFixed(1)),
-        research: Number((theOverall - 2 + seeded(i + 4) * 5).toFixed(1)),
-        citations: Number((theOverall - 4 + seeded(i + 5) * 7).toFixed(1)),
-        internationalOutlook: Number((theOverall - 5 + seeded(i + 6) * 8).toFixed(1)),
+async function initializeRankingData() {
+  try {
+    const response = await fetch('/api/universities');
+    const data = await response.json();
+    
+    rankingData = data.map(uni => ({
+      id: uni.id,
+      name: uni.name || 'Unknown University',
+      country: uni.country || 'Unknown',
+      region: uni.region || 'Unknown',
+      theRank: uni.the_rank || 100,
+      qsRank: uni.qs_rank || 100,
+      arwuRank: uni.arwu_rank || 100,
+      avgRank: uni.avg_rank || 100,
+      rankings: {
+        the: {
+          rank: uni.the_rank || 100,
+          overall: 50,
+          teaching: 50,
+          research: 50,
+          citations: 50,
+          internationalOutlook: 50,
+        },
+        qs: {
+          rank: uni.qs_rank || 100,
+          overall: 50,
+          academicReputation: 50,
+          employerReputation: 50,
+          facultyStudent: 50,
+          citationsPerFaculty: 50,
+          internationalFaculty: 50,
+          internationalStudents: 50,
+        },
+        arwu: {
+          rank: uni.arwu_rank || 100,
+          overall: 50,
+          alumni: 50,
+          award: 50,
+          hici: 50,
+          ns: 50,
+          pub: 50,
+          pcp: 50,
+        },
       },
-      qs: {
-        rank: qsRank,
-        overall: qsOverall,
-        academicReputation: Number((qsOverall - 2 + seeded(i + 7) * 5).toFixed(1)),
-        employerReputation: Number((qsOverall - 3 + seeded(i + 8) * 6).toFixed(1)),
-        facultyStudent: Number((qsOverall - 4 + seeded(i + 9) * 7).toFixed(1)),
-        citationsPerFaculty: Number((qsOverall - 3 + seeded(i + 10) * 6).toFixed(1)),
-        internationalFaculty: Number((qsOverall - 5 + seeded(i + 11) * 9).toFixed(1)),
-        internationalStudents: Number((qsOverall - 5 + seeded(i + 12) * 9).toFixed(1)),
-      },
-      arwu: {
-        rank: arwuRank,
-        overall: arwuOverall,
-        alumni: Number((arwuOverall - 5 + seeded(i + 13) * 10).toFixed(1)),
-        award: Number((arwuOverall - 6 + seeded(i + 14) * 10).toFixed(1)),
-        hici: Number((arwuOverall - 4 + seeded(i + 15) * 8).toFixed(1)),
-        ns: Number((arwuOverall - 3 + seeded(i + 16) * 7).toFixed(1)),
-        pub: Number((arwuOverall - 2 + seeded(i + 17) * 5).toFixed(1)),
-        pcp: Number((arwuOverall - 4 + seeded(i + 18) * 8).toFixed(1)),
-      },
-    },
-  };
-});
+    }));
+    
+    render();
+    loadUniversitiesForAdmin();
+  } catch (error) {
+    console.error('Failed to load ranking data from database:', error);
+    alert('Failed to load university rankings. Please refresh the page.');
+  }
+}
 
 const state = {
   search: "",
@@ -738,7 +744,7 @@ function setupAdminPanel() {
 
 async function loadUniversitiesForAdmin() {
   try {
-    const unis = await fetch("/api/universities").then(r => r.json());
+    const unis = rankingData.length > 0 ? rankingData : await fetch("/api/universities").then(r => r.json());
     
     // Update edit select
     const editSelect = document.getElementById("edit-uni-id");
@@ -746,7 +752,7 @@ async function loadUniversitiesForAdmin() {
     unis.forEach(uni => {
       const opt = document.createElement("option");
       opt.value = uni.id;
-      opt.textContent = uni.name;
+      opt.textContent = uni.name || 'Unknown University';
       editSelect.appendChild(opt);
     });
 
@@ -756,7 +762,7 @@ async function loadUniversitiesForAdmin() {
     unis.forEach(uni => {
       const opt = document.createElement("option");
       opt.value = uni.id;
-      opt.textContent = uni.name;
+      opt.textContent = uni.name || 'Unknown University';
       rankSelect.appendChild(opt);
     });
 
@@ -766,7 +772,7 @@ async function loadUniversitiesForAdmin() {
     unis.forEach(uni => {
       const opt = document.createElement("option");
       opt.value = uni.id;
-      opt.textContent = uni.name;
+      opt.textContent = uni.name || 'Unknown University';
       metricSelect.appendChild(opt);
     });
   } catch (error) {
@@ -777,5 +783,4 @@ async function loadUniversitiesForAdmin() {
 initFilters();
 bindEvents();
 setupAdminPanel();
-render();
-handleRoute();
+initializeRankingData();
