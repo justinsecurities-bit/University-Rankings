@@ -3,36 +3,125 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Insect Smash</title>
+  <title>Unified University Rankings</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <main class="app">
-    <section id="start-screen" class="screen">
-      <h1>Insect Smash</h1>
-      <p>Smash insects before they escape. Survive as long as you can.</p>
-      <button id="start-btn" class="btn">Start Game</button>
-      <p class="hint">Desktop: Click | Mobile: Tap</p>
-    </section>
+  <header class="topbar">
+    <h1>Unified University Rankings</h1>
+    <p>Compare THE, QS, and ARWU ranks in one place.</p>
+  </header>
 
-    <section id="game-screen" class="screen hidden">
-      <header class="hud">
-        <div class="hud-item">Score: <span id="score">0</span></div>
-        <div class="hud-item">Combo: <span id="combo">x1.0</span></div>
-        <div class="hud-item">High Score: <span id="high-score">0</span></div>
-        <div class="hud-item">Time: <span id="time-left">60</span>s</div>
-        <div class="hud-item" id="lives"></div>
-      </header>
-      <div class="canvas-wrap">
-        <canvas id="game-canvas" width="960" height="540" aria-label="Insect Smash game canvas"></canvas>
+  <main class="container">
+    <section class="card filters">
+      <div class="field grow">
+        <label for="search">Search University / Country</label>
+        <input id="search" type="text" placeholder="e.g. MIT, Singapore, Oxford" />
+      </div>
+      <div class="field">
+        <label for="country-filter">Country</label>
+        <select id="country-filter">
+          <option value="">All Countries</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="region-filter">Region</label>
+        <select id="region-filter">
+          <option value="">All Regions</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="provider-view">View</label>
+        <select id="provider-view">
+          <option value="all">All Rankings</option>
+          <option value="the">THE only</option>
+          <option value="qs">QS only</option>
+          <option value="arwu">ARWU only</option>
+        </select>
+      </div>
+      <div class="field small">
+        <label for="rank-min">Rank Min</label>
+        <input id="rank-min" type="number" min="1" placeholder="1" />
+      </div>
+      <div class="field small">
+        <label for="rank-max">Rank Max</label>
+        <input id="rank-max" type="number" min="1" placeholder="1000" />
+      </div>
+      <div class="field actions">
+        <button id="reset-btn">Reset Filters</button>
       </div>
     </section>
 
-    <section id="game-over-screen" class="screen hidden">
-      <h2>Game Over</h2>
-      <p>Final Score: <span id="final-score">0</span></p>
-      <p>Best Score: <span id="best-score">0</span></p>
-      <button id="play-again-btn" class="btn">Play Again</button>
+    <section class="card">
+      <div class="table-meta">
+        <p id="result-count">0 universities</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sticky-col">Compare</th>
+              <th data-sort="name">University</th>
+              <th data-sort="country">Country</th>
+              <th data-sort="region">Region</th>
+              <th data-sort="theRank">THE Rank</th>
+              <th data-sort="qsRank">QS Rank</th>
+              <th data-sort="arwuRank">ARWU Rank</th>
+              <th data-sort="avgRank">Avg Rank</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button id="prev-page">Previous</button>
+        <span id="page-info">Page 1</span>
+        <button id="next-page">Next</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="compare-header">
+        <h2>Comparison (select 2 to 5)</h2>
+        <button id="compare-clear">Clear Selection</button>
+      </div>
+      <div id="compare-state" class="muted">Select universities from the table to compare rankings.</div>
+      <div id="compare-table-wrap" class="table-wrap hidden">
+        <table>
+          <thead>
+            <tr>
+              <th>University</th>
+              <th>Country</th>
+              <th>THE</th>
+              <th>QS</th>
+              <th>ARWU</th>
+              <th>Average</th>
+            </tr>
+          </thead>
+          <tbody id="compare-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="profile-view" class="card hidden">
+      <div class="compare-header">
+        <h2 id="profile-name">University Profile</h2>
+        <button id="profile-back">Back to Rankings</button>
+      </div>
+      <p id="profile-meta" class="muted"></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Rank</th>
+              <th>Overall Score</th>
+              <th>Breakdown</th>
+            </tr>
+          </thead>
+          <tbody id="profile-breakdown-body"></tbody>
+        </table>
+      </div>
     </section>
   </main>
 

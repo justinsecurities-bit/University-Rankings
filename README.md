@@ -1,52 +1,35 @@
-# Insect Smash (Browser Game)
+# Unified University Rankings
 
-Fast-paced arcade web game where you click/tap insects before they escape.
+A ranking-only web app that aggregates university positions across:
 
-## About
+- Times Higher Education (THE)
+- QS World University Rankings
+- ShanghaiRanking (ARWU)
 
-Insect Smash is a lightweight arcade browser game focused on quick reflexes and short play sessions.
-You have 30 seconds to smash as many insects as possible by clicking (desktop) or tapping (mobile).
-The game is designed to be simple, responsive, and fun, with animated feedback, score tracking, and increasing challenge over time.
-
-## Live Demo
-
-GitHub Pages URL (after enabling Pages in repository settings):
-
-- https://justinsecurities-bit.github.io/AntKiller/
-
-## Deployment Link
-
-- Public game: https://justinsecurities-bit.github.io/AntKiller/
-- Repository: https://github.com/justinsecurities-bit/AntKiller
-
-## Screenshot
-
-![Insect Smash gameplay screenshot](./assets/insect-smash-screenshot.svg)
+No events/products/services pages are included; this project focuses only on rankings comparison.
 
 ## Features
 
-- 3 insect types with different speed/points (`fly`, `mosquito`, `ant`)
-- Multiple movement patterns (straight, zig-zag, jitter)
-- Point system: score is the number of insects smashed in one round
-- Combo tracking for streak feedback
-- Progressive difficulty (spawn rate + speed + occasional multi-spawn)
-- 30-second game session
-- Start, gameplay, and game-over screens
-- Floating score text and particle feedback
-- Light synth audio for hit/miss/game-over and looping background theme
-- Local high score persistence with `localStorage`
-- Mouse + touch controls (desktop/mobile)
+- Unified table with `University`, `Country`, `Region`, `THE`, `QS`, `ARWU`, and average rank
+- Simulated Top 100 universities with Top 100 ranks per provider
+- Sort any table column
+- Filter by country, region, rank range, and provider view (All / THE / QS / ARWU)
+- Global search (university name or country)
+- Pagination for large datasets
+- Compare tool (2 to 5 universities)
+- University profile route (`/university/:id`) with provider-specific score breakdown fields
+
+## Data
+
+The app includes a 100-entry simulated dataset in `script.js` with:
+
+- THE rank + metric breakdown (`teaching`, `research`, `citations`, `internationalOutlook`)
+- QS rank + metric breakdown (`academicReputation`, `employerReputation`, `facultyStudent`, `citationsPerFaculty`, `internationalFaculty`, `internationalStudents`)
+- ARWU rank + metric breakdown (`alumni`, `award`, `hici`, `ns`, `pub`, `pcp`)
 
 ## Run Locally
 
-Because many browsers restrict module/media behavior on `file://`, use a local static server:
-
-### Option A: VS Code / Cursor Live Server
-
-1. Open project folder.
-2. Start Live Server on `index.html`.
-
-### Option B: Python
+Open `index.html` directly, or run a static server:
 
 ```bash
 python -m http.server 8000
@@ -54,24 +37,23 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-## Deploy
+## Deploy (Vercel)
 
-This project is static and deploys directly to:
+1. Import this repository into Vercel.
+2. Framework Preset: `Other`.
+3. Build Command: leave empty.
+4. Output Directory: `.`.
+5. Deploy.
 
-- Vercel
-- Netlify
-- GitHub Pages
+`vercel.json` already includes a rewrite so `/university/:id` routes back to `index.html`.
 
-### GitHub Pages Setup (one-time)
+## Deployment Link
 
-1. Open repository settings: `Settings -> Pages`.
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Push any commit to `main` (or re-run the `Deploy static content to Pages` workflow in Actions).
-4. Your public game URL will be:
-   - `https://justinsecurities-bit.github.io/AntKiller/`
+- Public URL: `https://justinsecurities-bit.github.io/AntKiller/`
+- Repository: `https://github.com/justinsecurities-bit/AntKiller`
 
 ## File Structure
 
-- `index.html` - screens + canvas + HUD layout
-- `styles.css` - responsive UI styling
-- `script.js` - game loop, entities, scoring, difficulty, rendering, audio
+- `index.html` - app layout and sections
+- `styles.css` - responsive dashboard styling
+- `script.js` - dataset + filtering/sorting/pagination/compare logic
