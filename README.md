@@ -2,11 +2,22 @@
 
 Fast-paced arcade web game where you click/tap insects before they escape.
 
+## About
+
+Insect Smash is a lightweight arcade browser game focused on quick reflexes and short play sessions.
+You have 30 seconds to smash as many insects as possible by clicking (desktop) or tapping (mobile).
+The game is designed to be simple, responsive, and fun, with animated feedback, score tracking, and increasing challenge over time.
+
 ## Live Demo
 
 GitHub Pages URL (after enabling Pages in repository settings):
 
 - https://justinsecurities-bit.github.io/AntKiller/
+
+## Deployment Link
+
+- Public game: https://justinsecurities-bit.github.io/AntKiller/
+- Repository: https://github.com/justinsecurities-bit/AntKiller
 
 ## Screenshot
 
